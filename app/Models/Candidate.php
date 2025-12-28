@@ -25,11 +25,16 @@ class Candidate extends Model implements HasMedia
         }
     }
 
-    protected $fillable = ['name','email','phone','position','source','status_id','division_id'];
+    protected $fillable = ['name','email','phone','position','source','status_id','division_id', 'job_vacancy_id'];
     
     public function division()
     {
         return $this->belongsTo(Division::class);
+    }
+    
+    public function jobVacancy()
+    {
+        return $this->belongsTo(JobVacancy::class);
     }
 
     public function status(){
@@ -46,4 +51,8 @@ class Candidate extends Model implements HasMedia
     }
 
 
+    public function customFieldValues()
+    {
+        return $this->morphMany(CustomFieldable::class, 'custom_fieldable');
+    }
 }

@@ -3706,10 +3706,17 @@ if (!function_exists('getMenus')) {
                 'id' => 'hrms',
                 'label' => get_label('HRMS', 'HRMS'),
                 'icon' => 'bx bx-group',
-                'class' => 'menu-item' . (Request::is('candidate*') || Request::is('candidate_status*') || Request::is('interviews*') || Request::is('divisions*') ? ' active open' : ''),
+                'class' => 'menu-item' . (Request::is('candidate*') || Request::is('candidate_status*') || Request::is('interviews*') || Request::is('divisions*') || Request::is('jobs*') ? ' active open' : ''),
                 'show' => ($user->can('manage_candidate') || $user->can('manage_candidate_status') || $user->can('manage_interview') || $user->can('manage_divisions')) ? 1 : 0,
                 'category' => 'utilities',
                 'submenus' => [
+                    [
+                        'id' => 'job_vacancies',
+                        'label' => get_label('job_vacancies', 'Job Vacancies'),
+                        'url' => route('jobs.index'),
+                        'class' => 'menu-item' . (Request::is('jobs*') ? ' active' : ''),
+                        'show' => $user->can('manage_candidate') ? 1 : 0,
+                    ],
                     [
                         'id' => 'candidates',
                         'label' => get_label('candidate', 'Candidates'),

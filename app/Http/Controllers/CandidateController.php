@@ -29,7 +29,7 @@ class CandidateController extends Controller
 
     $users = User::all();
     $candidates = Candidate::all();
-    $candidate = Candidate::with('status', 'interviews.interviewer')->findOrFail($id);
+    $candidate = Candidate::with('status', 'interviews.interviewer', 'customFieldValues.customField')->findOrFail($id);
     $statuses = CandidateStatus::orderBy('order')->get();
     return view('candidate.show', compact('candidate', 'statuses', 'users', 'candidates'));
   }
@@ -1287,6 +1287,7 @@ class CandidateController extends Controller
   public function kanban_view(Request $request)
   {
     $statuses = (array) $request->input('statuses', []);
+    $jobVacancyId = $request->input('job_vacancy_id');
     $startDate = $request->input('candidate_date_between_from');
     $endDate = $request->input('candidate_date_between_to');
 
@@ -1298,11 +1299,15 @@ class CandidateController extends Controller
     ];
     [$sort, $order] = $sortOptions[$request->input('sort')] ?? ['id', 'desc'];
 
-    $candidatesQuery = Candidate::with(['status']) // Add necessary relationships
+    $candidatesQuery = Candidate::with(['status', 'jobVacancy']) // Add necessary relationships
       ->orderBy($sort, $order);
 
     if (!empty($statuses)) {
       $candidatesQuery->whereIn('status_id', $statuses);
+    }
+
+    if ($jobVacancyId) {
+        $candidatesQuery->where('job_vacancy_id', $jobVacancyId);
     }
 
     if ($startDate && $endDate) {
@@ -1312,8 +1317,9 @@ class CandidateController extends Controller
     $candidates = $candidatesQuery->get();
 
     $statuses = CandidateStatus::orderBy('order')->get();
+    $jobVacancies = \App\Models\JobVacancy::where('status', 'active')->get();
 
-    return view('candidate.kanban', compact('candidates', 'statuses'));
+    return view('candidate.kanban', compact('candidates', 'statuses', 'jobVacancies'));
   }
 
   public function list()

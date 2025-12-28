@@ -75,6 +75,8 @@ use App\Http\Controllers\EstimatesInvoicesController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\JobVacancyController;
+use App\Http\Controllers\PublicJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -153,6 +155,14 @@ Route::get('/meetings/join/web-view/{id}', [MeetingsController::class, 'joinWebV
 
 
 Route::middleware(['CheckInstallation'])->group(function () {
+    
+    // Public Job Board Routes
+    Route::prefix('careers')->group(function () {
+        Route::get('/', [PublicJobController::class, 'index'])->name('public.jobs.index');
+        Route::get('/{slug}', [PublicJobController::class, 'show'])->name('public.jobs.show');
+        Route::get('/{slug}/apply', [PublicJobController::class, 'apply'])->name('public.jobs.apply');
+        Route::post('/{slug}/apply', [PublicJobController::class, 'storeApplication'])->name('public.jobs.store');
+    });
 
     Route::get('/', [UserController::class, 'login'])->name('login')->middleware('guest');
 
@@ -1037,6 +1047,16 @@ Route::middleware(['CheckInstallation'])->group(function () {
         })->middleware(['auth:web']);
 
 
+
+        // Routes for Job Vacancies (Admin)
+        Route::prefix('jobs')->middleware('customcan:manage_candidate')->group(function () {
+            Route::get('/', [JobVacancyController::class, 'index'])->name('jobs.index');
+            Route::get('/create', [JobVacancyController::class, 'create'])->name('jobs.create');
+            Route::post('/store', [JobVacancyController::class, 'store'])->name('jobs.store');
+            Route::get('/edit/{id}', [JobVacancyController::class, 'edit'])->name('jobs.edit');
+            Route::put('/update/{id}', [JobVacancyController::class, 'update'])->name('jobs.update');
+            Route::delete('/destroy/{id}', [JobVacancyController::class, 'destroy'])->name('jobs.destroy');
+        });
 
         // Routes for Candidates
 

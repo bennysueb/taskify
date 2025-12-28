@@ -89,6 +89,15 @@
                                 <label class="form-label"><?= get_label('created_at', 'Created At') ?></label>
                                 <input class="form-control" value="{{ format_date($candidate->created_at) }}" readonly>
                             </div>
+                            @if ($candidate->customFieldValues->count() > 0)
+                                @foreach ($candidate->customFieldValues as $customFieldValue)
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">{{ $customFieldValue->customField->field_label }}</label>
+                                        <input class="form-control" type="text"
+                                            value="{{ $customFieldValue->value }}" readonly>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -680,6 +680,16 @@ class SettingsController extends Controller
                     case 'interview_status_update':
                         $directory .= 'interview_status_update.blade.php';
                         break;
+                    case 'job_application_received':
+                        return response()->json([
+                            'error' => false, 
+                            'message' => 'Reset to default successfully.',
+                            'content' => '<p>Dear {CANDIDATE_NAME},</p>
+<p>Thank you for applying for the position of <strong>{JOB_TITLE}</strong> at {COMPANY_TITLE}.</p>
+<p>We have received your application and will review it shortly. If your qualifications match our requirements, we will contact you to discuss the next steps.</p>
+<p>Best regards,<br>{COMPANY_TITLE} Team</p>
+<p><small>Visit us at: {SITE_URL}</small></p>'
+                        ]);
                     default:
                         return response()->json(['error' => true, 'message' => 'Unknown email template name.']);
                 }
@@ -687,7 +697,6 @@ class SettingsController extends Controller
 
             case 'sms':
             case 'whatsapp':
-            case 'telegram':
             case 'telegram':
                 switch ($name) {
                     case 'project_assignment':
@@ -731,6 +740,9 @@ class SettingsController extends Controller
                         break;
                     case 'interview_status_update':
                         return response()->json(['error' => false, 'message' => 'Reset to default successfully.', 'content' => '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of your interview (ID: #{INTERVIEW_ID}) for {CANDIDATE_NAME} from "{OLD_STATUS}" to "{NEW_STATUS}".']);
+                        break;
+                    case 'job_application_received':
+                        return response()->json(['error' => false, 'message' => 'Reset to default successfully.', 'content' => 'Dear {CANDIDATE_NAME}, we have received your application for {JOB_TITLE} at {COMPANY_TITLE}. We will review it shortly.']);
                         break;
                     default:
                         return response()->json(['error' => true, 'message' => 'Unknown SMS template name.']);
@@ -801,28 +813,24 @@ class SettingsController extends Controller
                             'message' => 'Reset to default successfully.',
                             'content' => '*New Project Assigned:* {PROJECT_TITLE}, ID: #{PROJECT_ID}. By {ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} You can find the project here :{PROJECT_URL}'
                         ]);
-                        break;
                     case 'project_status_updation':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => '*Project Status Updated:* By {UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} , {PROJECT_TITLE}, ID: #{PROJECT_ID}. Status changed from `{OLD_STATUS}` to `{NEW_STATUS}`. You can find the project here :{PROJECT_URL}'
                         ]);
-                        break;
                     case 'task_assignment':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => '*New Task Assigned:* {TASK_TITLE}, ID: #{TASK_ID}. By {ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} You can find the task here : {TASK_URL}'
                         ]);
-                        break;
                     case 'task_status_updation':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => '*Task Status Updated:* By {UPDATER_FIRST_NAME} {UPDATER_LAST_NAME},  {TASK_TITLE}, ID: #{TASK_ID}. Status changed from `{OLD_STATUS}` to `{NEW_STATUS}`. You can find the Task here : {TASK_URL}'
                         ]);
-                        break;
                     case 'workspace_assignment':
                         return response()->json([
                             'error' => false,
@@ -841,35 +849,30 @@ class SettingsController extends Controller
                             'message' => 'Reset to default successfully.',
                             'content' => '*New {TYPE} Leave Request Created:* ID: #{ID} By {REQUESTEE_FIRST_NAME} {REQUESTEE_LAST_NAME} for {REASON}.  From ( {FROM} ) -  To ( {TO} ).'
                         ]);
-                        break;
                     case 'leave_request_status_updation':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => '*Leave Request Status Updated:* For {REQUESTEE_FIRST_NAME} {REQUESTEE_LAST_NAME},  ID: #{ID}. Status changed from `{OLD_STATUS}` to `{NEW_STATUS}`.'
                         ]);
-                        break;
                     case 'team_member_on_leave_alert':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => '*Team Member Leave Alert:* {REQUESTEE_FIRST_NAME} {REQUESTEE_LAST_NAME} will be on {TYPE} leave from {FROM} to {TO}.'
                         ]);
-                        break;
                     case 'birthday_wish':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => 'Hello *{FIRST_NAME} {LAST_NAME}*, {COMPANY_TITLE} wishes you a very Happy Birthday!'
                         ]);
-                        break;
                     case 'work_anniversary_wish':
                         return response()->json([
                             'error' => false,
                             'message' => 'Reset to default successfully.',
                             'content' => 'Hello *{FIRST_NAME} {LAST_NAME}*, {COMPANY_TITLE} wishes you a very happy work anniversary!'
                         ]);
-                        break;
 
                     case 'task_reminder':
                         return response()->json(['error' => false, 'message' => 'Reset to default successfully.', 'content' => 'You have a task reminder for Task #{TASK_ID} - "{TASK_TITLE}". You can view the task here: {TASK_URL}.']);
@@ -884,7 +887,6 @@ class SettingsController extends Controller
                             'message' => 'Reset to default successfully.',
                             'content' => '{ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} has scheduled a new interview for {CANDIDATE_NAME}. Interview ID: #{INTERVIEW_ID}, Round: {ROUND}, Scheduled at: {SCHEDULED_AT}, Interviewer: {INTERVIEWER_FIRST_NAME} {INTERVIEWER_LAST_NAME}.'
                         ]);
-                        break;
 
                     case 'interview_status_update':
                         return response()->json([
@@ -892,7 +894,6 @@ class SettingsController extends Controller
                             'message' => 'Reset to default successfully.',
                             'content' => '{UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of your interview (ID: #{INTERVIEW_ID}) for {CANDIDATE_NAME} from "{OLD_STATUS}" to "{NEW_STATUS}".'
                         ]);
-                        break;
                 }
 
             default:

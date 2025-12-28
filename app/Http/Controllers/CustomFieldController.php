@@ -83,7 +83,7 @@ class CustomFieldController extends Controller
         $isApi = $request->get('isApi', false);
         try {
             $request->validate([
-                'module' => 'required|string|in:project,task',
+            'module' => 'required|string|in:project,task,candidate',
                 'field_label' => 'required|string',
                 'field_type' => 'required|string|in:text,number,password,textarea,radio,date,checkbox,select',
                 'options' => 'nullable|array|required_if:field_type,radio,checkbox,select',
@@ -202,7 +202,7 @@ class CustomFieldController extends Controller
 
 
         $rules = [
-            'module' => 'required|string|in:project,task',
+            'module' => 'required|string|in:project,task,candidate',
             'field_label' => 'required|string',
             'field_type' => 'required|string|in:text,number,password,textarea,radio,date,checkbox,select',
             'options' => 'nullable|array|required_if:field_type,radio,checkbox,select',

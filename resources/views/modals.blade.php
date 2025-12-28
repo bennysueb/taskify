@@ -6174,6 +6174,7 @@
                                     <option value="">Select Module</option>
                                     <option value="project">Project</option>
                                     <option value="task">Task</option>
+                                    <option value="candidate">Candidate</option>
                                 </select>
                             </div>
                         </div>

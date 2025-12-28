@@ -48,15 +48,92 @@
                                     <a class="list-group-item list-group-item-action" id="email-forgot-password-list-item" data-bs-toggle="list" href="#email-forgot-password">{{get_label('forgot_password','Forgot password')}}</a>
                                     <a class="list-group-item list-group-item-action" id="email-project-list-item" data-bs-toggle="list" href="#email-project">{{get_label('project','Project')}}</a>
                                     <a class="list-group-item list-group-item-action" id="email-task-list-item" data-bs-toggle="list" href="#email-task">{{get_label('task','Task')}}</a>
-                                    <a class="list-group-item list-group-item-action" id="email-workspace-assignment-list-item" data-bs-toggle="list" href="#email-workspace-assignment">{{get_label('workspace_assignment','Workspace assignment')}}</a>
-                                    <a class="list-group-item list-group-item-action" id="email-meeting-assignment-list-item" data-bs-toggle="list" href="#email-meeting-assignment">{{get_label('meeting_assignment','Meeting assignment')}}</a>
+                                    <a class="list-group-item list-group-item-action" id="email-workspace-assignment-list-item" data-bs-toggle="list" href="#email-workspace-assignment">{{get_label('workspace_assignment','Workspace Assignment')}}</a>
+                                    <a class="list-group-item list-group-item-action" id="email-meeting-assignment-list-item" data-bs-toggle="list" href="#email-meeting-assignment">{{get_label('meeting_assignment','Meeting Assignment')}}</a>
+                                    <a class="list-group-item list-group-item-action" id="email-interview-list-item" data-bs-toggle="list" href="#email-interview">{{get_label('interview','Interview')}}</a>
                                     <a class="list-group-item list-group-item-action" id="email-leave-request-list-item" data-bs-toggle="list" href="#email-leave-request">{{get_label('leave_request','Leave Request')}}</a>
-                                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#email-birthday-wish">{{get_label('birthday_wish','Birthday Wish')}}</a>
-                                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#email-work-anniversary-wish">{{get_label('work_anniversary_wish','Work Anni. Wish')}}</a>
-                                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#email-interview">{{get_label('interview','Interview')}}</a>
-
+                                    <a class="list-group-item list-group-item-action" id="email-birthday-wish-list-item" data-bs-toggle="list" href="#email-birthday-wish">{{get_label('birthday_wish','Birthday Wish')}}</a>
+                                    <a class="list-group-item list-group-item-action" id="email-work-anniversary-wish-list-item" data-bs-toggle="list" href="#email-work-anniversary-wish">{{get_label('work_anniversary_wish','Work Anniversary Wish')}}</a>
+                                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#email-job-application-received">{{get_label('job_application_received','Job Application Received')}}</a>
                                 </div>
                                 <div class="tab-content px-0 mt-0">
+                                    <div class="tab-pane fade" id="email-job-application-received">
+                                        @php
+                                        $job_application_received_template = App\Models\Template::where('type', 'email')
+                                        ->where('name', 'job_application_received')
+                                        ->first();
+                                        @endphp
+                                        <small class="text-light fw-semibold mb-1"><?= get_label('job_application_received_email_info', 'This template will be used for the email notification sent to candidates when they successfully apply for a job.') ?></small>
+                                        <form action="{{url('settings/store_template')}}" class="form-submit-event" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="type" value="email">
+                                            <input type="hidden" name="name" value="job_application_received">
+                                            <input type="hidden" name="dnr">
+                                            <label class="form-label mt-3"><?= get_label('subject', 'Subject') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {CANDIDATE_NAME}, {JOB_TITLE}, {COMPANY_TITLE})</small></label>
+                                            <input type="text" class="form-control mb-3" name="subject" value="{{ $job_application_received_template->subject ?? '' }}" placeholder="{{get_label('please_enter_email_subject','Please enter email subject')}}">
+                                            <label class="form-label"><?= get_label('message', 'Message') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {CANDIDATE_NAME}, {JOB_TITLE}, {COMPANY_TITLE}, {SITE_URL})</small></label>
+                                            <textarea id="email_job_application_received" name="content" class="form-control">{{ $job_application_received_template->content ?? '' }}</textarea>
+                                            <div class="col-md-6 mt-4 mb-5">
+                                                <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('job_application_received_email_will_not_sent', 'If Deactive, job application received email notification won\'t be sent') ?></small>)</label>
+                                                <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                                                    <input type="radio" class="btn-check" id="email_job_application_received_status_active" name="status" value="1" {{ !($job_application_received_template) || $job_application_received_template && $job_application_received_template->status == 1 ? 'checked' : '' }}>
+                                                    <label class="btn btn-outline-primary" for="email_job_application_received_status_active">{{ get_label('active', 'Active') }}</label>
+                                                    <input type="radio" class="btn-check" id="email_job_application_received_status_deactive" name="status" value="0" {{ $job_application_received_template && $job_application_received_template->status == 0 ? 'checked' : '' }}>
+                                                    <label class="btn btn-outline-primary" for="email_job_application_received_status_deactive">{{ get_label('deactive', 'Deactive') }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <button type="submit" class="btn btn-primary" id="submit_btn"><?= get_label('save', 'Save') ?></button>
+                                                <button type="button" class="btn btn-warning restore-default"><?= get_label('reset_to_default', 'Reset to default') ?></button>
+                                            </div>
+                                            <div class="table-responsive text-nowrap">
+                                                <h5 class="mt-5">{{get_label('available_placeholders', 'Available placeholders')}}</h5>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{get_label('placeholder','Placeholder')}}</th>
+                                                            <th>{{get_label('action','Action')}}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="copyText">{CANDIDATE_NAME}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{CANDIDATE_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="copyText">{JOB_TITLE}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{JOB_TITLE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="copyText">{COMPANY_TITLE}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard(27)" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td class="copyText">{SITE_URL}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard(29)" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </form>
+                                    </div>
                                     <div class="tab-pane fade show active" id="email-account-creation">
                                         @php
                                         $account_creation_template = App\Models\Template::where('type', 'email')
@@ -1528,6 +1605,131 @@
                                             </div>
                                         </form>
                                     </div>
+                                    <div class="tab-pane fade" id="email-interview">
+                                        <div class="list-group list-group-horizontal-md text-md-center">
+                                            <a class="list-group-item list-group-item-action active" id="email-interview-assignment-list-item" data-bs-toggle="list" href="#email-interview-assignment">{{get_label('assignment','Assignment')}}</a>
+                                            <a class="list-group-item list-group-item-action" id="email-interview-status-updation-list-item" data-bs-toggle="list" href="#email-interview-status-updation">{{get_label('status_updation','Status Updation')}}</a>
+                                        </div>
+                                        <div class="tab-content px-0">
+                                            <div class="tab-pane fade show active" id="email-interview-assignment">
+                                                @php
+                                                $interview_assignment_template = App\Models\Template::where('type', 'email')
+                                                ->where('name', 'interview_assignment')
+                                                ->first();
+                                                @endphp
+                                                <small class="text-light fw-semibold mb-1"><?= get_label('interview_assignment_email_info', 'This template will be used for the email notification sent to users/candidates when an interview is assigned.') ?></small>
+                                                <form action="{{url('settings/store_template')}}" class="form-submit-event" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="type" value="email">
+                                                    <input type="hidden" name="name" value="interview_assignment">
+                                                    <input type="hidden" name="dnr">
+                                                    <label class="form-label mt-3"><?= get_label('subject', 'Subject') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {INTERVIEW_ID}, {CANDIDATE_NAME}, {ROUND}, {SCHEDULED_AT}, {COMPANY_TITLE})</small></label>
+                                                    <input type="text" class="form-control mb-3" name="subject" value="{{ $interview_assignment_template->subject ?? '' }}" placeholder="{{get_label('please_enter_email_subject','Please enter email subject')}}">
+                                                    <label class="form-label"><?= get_label('message', 'Message') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {{get_label('all_available_placeholders', 'All available placeholders')}})</small></label>
+                                                    <textarea id="email_interview_assignment" name="content" class="form-control">{{ $interview_assignment_template->content ?? '' }}</textarea>
+                                                    <div class="col-md-6 mt-4 mb-5">
+                                                        <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('interview_assignment_email_will_not_sent', 'If Deactive, interview assignment email notification won\'t be sent') ?></small>)</label>
+                                                        <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                                                            <input type="radio" class="btn-check" id="email_interview_assignment_status_active" name="status" value="1" {{ !($interview_assignment_template) || $interview_assignment_template && $interview_assignment_template->status == 1 ? 'checked' : '' }}>
+                                                            <label class="btn btn-outline-primary" for="email_interview_assignment_status_active">{{ get_label('active', 'Active') }}</label>
+                                                            <input type="radio" class="btn-check" id="email_interview_assignment_status_deactive" name="status" value="0" {{ $interview_assignment_template && $interview_assignment_template->status == 0 ? 'checked' : '' }}>
+                                                            <label class="btn btn-outline-primary" for="email_interview_assignment_status_deactive">{{ get_label('deactive', 'Deactive') }}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center mt-3">
+                                                        <button type="submit" class="btn btn-primary" id="submit_btn"><?= get_label('save', 'Save') ?></button>
+                                                        <button type="button" class="btn btn-warning restore-default"><?= get_label('reset_to_default', 'Reset to default') ?></button>
+                                                    </div>
+                                                    <div class="table-responsive text-nowrap">
+                                                        <h5 class="mt-5">{{get_label('available_placeholders', 'Available placeholders')}}</h5>
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{get_label('placeholder','Placeholder')}}</th>
+                                                                    <th>{{get_label('action','Action')}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr><td class="copyText">{INTERVIEW_ID}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEW_ID}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{CANDIDATE_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{CANDIDATE_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{ROUND}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{ROUND}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{SCHEDULED_AT}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{SCHEDULED_AT}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{MODE}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{MODE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{LOCATION}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{LOCATION}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEWER_FIRST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEWER_FIRST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEWER_LAST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEWER_LAST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{ASSIGNEE_FIRST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{ASSIGNEE_FIRST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{ASSIGNEE_LAST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{ASSIGNEE_LAST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEW_URL}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEW_URL}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{COMPANY_TITLE}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{COMPANY_TITLE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <div class="tab-pane fade" id="email-interview-status-updation">
+                                                 @php
+                                                $interview_status_update_template = App\Models\Template::where('type', 'email')
+                                                ->where('name', 'interview_status_update')
+                                                ->first();
+                                                @endphp
+                                                <small class="text-light fw-semibold mb-1"><?= get_label('interview_status_update_email_info', 'This template will be used for the email notification sent to users/candidates when an interview status is updated.') ?></small>
+                                                <form action="{{url('settings/store_template')}}" class="form-submit-event" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="type" value="email">
+                                                    <input type="hidden" name="name" value="interview_status_update">
+                                                    <input type="hidden" name="dnr">
+                                                    <label class="form-label mt-3"><?= get_label('subject', 'Subject') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {INTERVIEW_ID}, {CANDIDATE_NAME}, {OLD_STATUS}, {NEW_STATUS}, {COMPANY_TITLE})</small></label>
+                                                    <input type="text" class="form-control mb-3" name="subject" value="{{ $interview_status_update_template->subject ?? '' }}" placeholder="{{get_label('please_enter_email_subject','Please enter email subject')}}">
+                                                    <label class="form-label"><?= get_label('message', 'Message') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {{get_label('all_available_placeholders', 'All available placeholders')}})</small></label>
+                                                    <textarea id="email_interview_status_update" name="content" class="form-control">{{ $interview_status_update_template->content ?? '' }}</textarea>
+                                                    <div class="col-md-6 mt-4 mb-5">
+                                                        <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('interview_status_update_email_will_not_sent', 'If Deactive, interview status updation email notification won\'t be sent') ?></small>)</label>
+                                                        <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                                                            <input type="radio" class="btn-check" id="email_interview_status_update_status_active" name="status" value="1" {{ !($interview_status_update_template) || $interview_status_update_template && $interview_status_update_template->status == 1 ? 'checked' : '' }}>
+                                                            <label class="btn btn-outline-primary" for="email_interview_status_update_status_active">{{ get_label('active', 'Active') }}</label>
+                                                            <input type="radio" class="btn-check" id="email_interview_status_update_status_deactive" name="status" value="0" {{ $interview_status_update_template && $interview_status_update_template->status == 0 ? 'checked' : '' }}>
+                                                            <label class="btn btn-outline-primary" for="email_interview_status_update_status_deactive">{{ get_label('deactive', 'Deactive') }}</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center mt-3">
+                                                        <button type="submit" class="btn btn-primary" id="submit_btn"><?= get_label('save', 'Save') ?></button>
+                                                        <button type="button" class="btn btn-warning restore-default"><?= get_label('reset_to_default', 'Reset to default') ?></button>
+                                                    </div>
+                                                    <div class="table-responsive text-nowrap">
+                                                        <h5 class="mt-5">{{get_label('available_placeholders', 'Available placeholders')}}</h5>
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{get_label('placeholder','Placeholder')}}</th>
+                                                                    <th>{{get_label('action','Action')}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr><td class="copyText">{INTERVIEW_ID}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEW_ID}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{CANDIDATE_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{CANDIDATE_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{ROUND}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{ROUND}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{SCHEDULED_AT}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{SCHEDULED_AT}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{MODE}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{MODE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{LOCATION}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{LOCATION}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEWER_FIRST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEWER_FIRST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEWER_LAST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEWER_LAST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{UPDATER_FIRST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{UPDATER_FIRST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{UPDATER_LAST_NAME}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{UPDATER_LAST_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{OLD_STATUS}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{OLD_STATUS}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{NEW_STATUS}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{NEW_STATUS}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{INTERVIEW_URL}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{INTERVIEW_URL}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                                <tr><td class="copyText">{COMPANY_TITLE}</td><td><a href="javascript:void(0);" onclick="copyToClipboard('{COMPANY_TITLE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}"><i class="bx bx-copy text-warning mx-2"></i></a></td></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="tab-pane fade" id="email-leave-request">
                                         <div class="list-group list-group-horizontal-md text-md-center">
                                             <a class="list-group-item list-group-item-action active" id="email-leave-request-creation-list-item" data-bs-toggle="list" href="#email-leave-request-creation">{{get_label('creation','Creation')}}</a>
@@ -2662,8 +2864,84 @@
                                     <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms-birthday-wish">{{get_label('birthday_wish','Birthday Wish')}}</a>
                                     <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms-work-anniversary-wish">{{get_label('work_anniversary_wish','Work Anni. Wish')}}</a>
                                     <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms-interview">{{get_label('interview','interview')}}</a>
+                                    <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms-job-application-received">{{get_label('job_application_received','Job Application Received')}}</a>
                                 </div>
-                                <div class="tab-content px-0">
+                                <div class="tab-content px-0 mt-0">
+                                    <div class="tab-pane fade" id="sms-job-application-received">
+                                        @php
+                                        $sms_job_application_received_template = App\Models\Template::where('type', 'sms')
+                                        ->where('name', 'job_application_received')
+                                        ->first();
+                                        @endphp
+                                        <small class="text-light fw-semibold mb-1"><?= get_label('job_application_received_sms_info', 'This template will be used for the SMS notification sent to candidates when they successfully apply for a job.') ?></small>
+                                        <form action="{{url('settings/store_template')}}" class="form-submit-event" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="type" value="sms">
+                                            <input type="hidden" name="name" value="job_application_received">
+                                            <input type="hidden" name="dnr">
+                                            <label class="form-label mt-3"><?= get_label('message', 'Message') ?> <span class="asterisk">*</span> <small class="text-muted">({{get_label('possible_placeholders', 'Possible placeholders')}} : {CANDIDATE_NAME}, {JOB_TITLE}, {COMPANY_TITLE}, {SITE_URL})</small></label>
+                                            <textarea id="sms_job_application_received" name="content" class="form-control" rows="5">{{ $sms_job_application_received_template->content ?? '' }}</textarea>
+                                            <div class="col-md-6 mt-4 mb-5">
+                                                <label class="form-label" for=""><?= get_label('status', 'Status') ?> (<small class="text-muted mt-2"><?= get_label('job_application_received_sms_will_not_sent', 'If Deactive, job application received SMS notification won\'t be sent') ?></small>)</label>
+                                                <div class="btn-group btn-group d-flex justify-content-center" role="group" aria-label="Basic radio toggle button group">
+                                                    <input type="radio" class="btn-check" id="sms_job_application_received_status_active" name="status" value="1" {{ !($sms_job_application_received_template) || $sms_job_application_received_template && $sms_job_application_received_template->status == 1 ? 'checked' : '' }}>
+                                                    <label class="btn btn-outline-primary" for="sms_job_application_received_status_active">{{ get_label('active', 'Active') }}</label>
+                                                    <input type="radio" class="btn-check" id="sms_job_application_received_status_deactive" name="status" value="0" {{ $sms_job_application_received_template && $sms_job_application_received_template->status == 0 ? 'checked' : '' }}>
+                                                    <label class="btn btn-outline-primary" for="sms_job_application_received_status_deactive">{{ get_label('deactive', 'Deactive') }}</label>
+                                                </div>
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <button type="submit" class="btn btn-primary" id="submit_btn"><?= get_label('save', 'Save') ?></button>
+                                                <button type="button" class="btn btn-warning sms-restore-default"><?= get_label('reset_to_default', 'Reset to default') ?></button>
+                                            </div>
+                                            <div class="table-responsive text-nowrap">
+                                                <h5 class="mt-5">{{get_label('available_placeholders', 'Available placeholders')}}</h5>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{get_label('placeholder','Placeholder')}}</th>
+                                                            <th>{{get_label('action','Action')}}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="copyText">{CANDIDATE_NAME}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{CANDIDATE_NAME}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="copyText">{JOB_TITLE}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{JOB_TITLE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="copyText">{COMPANY_TITLE}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{COMPANY_TITLE}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td class="copyText">{SITE_URL}</td>
+                                                            <td>
+                                                                <a href="javascript:void(0);" onclick="copyToClipboard('{SITE_URL}')" title="{{get_label('copy_to_clipboard','Copy to clipboard')}}">
+                                                                    <i class="bx bx-copy text-warning mx-2"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </form>
+                                    </div>
                                     <div class="tab-pane fade show active" id="sms-project">
                                         <div class="list-group list-group-horizontal-md text-md-center">
                                             <a class="list-group-item list-group-item-action active" id="sms-project-assignment-list-item" data-bs-toggle="list" href="#sms-project-assignment">{{get_label('assignment','Assignment')}}</a>

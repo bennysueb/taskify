@@ -85,7 +85,8 @@
     Request::is('install') ||
     // Request::is('system-health') ||
     Request::is('signup') ||
-    Request::is('privacy-policy')
+    Request::is('privacy-policy') ||
+    Request::is('careers*')
     )
     @yield('content')
     @include('labels')
