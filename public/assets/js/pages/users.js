@@ -37,3 +37,25 @@ $(document).on('click', '.clear-users-filters', function (e) {
     $('#user_ev_status_filter').val('').trigger('change', [0]); 
     $('#table').bootstrapTable('refresh');   
 })
+
+$(document).on('click', '.send-verification-mail', function (e) {
+    e.preventDefault();
+    var id = $(this).data('id');
+    $.ajax({
+        url: '/users/resend-verification/' + id,
+        type: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.error) {
+                toastr.error(response.message);
+            } else {
+                toastr.success(response.message);
+            }
+        },
+        error: function () {
+            toastr.error('Something went wrong.');
+        }
+    });
+});

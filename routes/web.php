@@ -585,6 +585,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
                 Route::post('/users/delete_multiple_user', [UserController::class, 'delete_multiple_user'])->middleware(['customcan:delete_users', 'demo_restriction', 'log.activity']);
 
                 Route::get('/users/list', [UserController::class, 'list']);
+                Route::get('/users/resend-verification/{id}', [UserController::class, 'resendVerificationToUser'])->middleware(['customcan:edit_users', 'log.activity']);
             });
             Route::get('/users/get-mentions', [UserController::class, 'get_mentions']);
 

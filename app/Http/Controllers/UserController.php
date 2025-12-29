@@ -1068,7 +1068,7 @@ class UserController extends Controller
                         : '<span class="badge bg-danger">' . get_label('deactive', 'Deactive') . '</span>';
 
                     $emailVerificationBadge = is_null($user->email_verified_at) && $user->id != $mainAdminId
-                        ? '<span class="badge bg-danger ms-1">' . get_label('unverified_email', 'Unverified Email') . '</span>'
+                        ? '<span class="badge bg-danger ms-1 send-verification-mail" data-id="' . $user->id . '" style="cursor:pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="' . get_label('click_to_resend_verification', 'Click to Resend Verification Link') . '">' . get_label('unverified_email', 'Unverified Email') . '</span>'
                         : '';
 
                     $formattedHtml = '<div class="d-flex align-items-center mt-2"> ' .
@@ -1486,5 +1486,24 @@ class UserController extends Controller
 
         // Return the combined results as JSON
         return response()->json($results);
+    }
+
+    public function resendVerificationToUser($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['error' => true, 'message' => get_label('email_already_verified', 'Email already verified.')]);
+        }
+
+        if (!isEmailConfigured()) {
+            return response()->json(['error' => true, 'message' => get_label('email_not_configured', 'Email settings are not configured.')]);
+        }
+
+        try {
+            $user->notify(new VerifyEmail($user));
+            return response()->json(['error' => false, 'message' => get_label('verification_link_sent', 'Verification link sent successfully.')]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => get_label('failed_to_send_verification_link', 'Failed to send verification link.')]);
+        }
     }
 }
