@@ -1,0 +1,9 @@
+{
+    "name": "Inventory Management",
+    "slug": "inventory-management",
+    "version": "1.0.0",
+    "description": "Professional inventory management system with categories, stock tracking, and history.",
+    "author": "Taskify",
+    "provider": "Plugins\\InventoryManagement\\Providers\\InventoryManagementServiceProvider",
+    "enabled": true
+}

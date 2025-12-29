@@ -5,6 +5,6 @@
     "description": "Securely manage passwords within Taskify.",
     "author": "Taskify",
     "provider": "Plugins\\PasswordManager\\Providers\\PasswordManagerServiceProvider",
-    "enabled": false,
+    "enabled": true,
     "path": "C:\\laragon\\www\\taskify\\plugins/PasswordManager"
 }

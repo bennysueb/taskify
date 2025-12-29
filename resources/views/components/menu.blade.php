@@ -208,6 +208,19 @@ $pendingLeaveRequestsCount = $query->count();
                         }
                     }
                 }
+                
+                // FIX: Append any new menus (like plugins) that are not in the saved order
+                $savedIds = collect($sortedMenus)->pluck('id')->toArray();
+                $missingMenus = collect($menus)->filter(function($menu) use ($savedIds) {
+                    return !in_array($menu['id'], $savedIds);
+                });
+                
+                if ($missingMenus->isNotEmpty()) {
+                    foreach($missingMenus as $missingMenu) {
+                        $sortedMenus[] = $missingMenu;
+                    }
+                }
+
             } else {
                 // Use default order if no saved menu order
                 $sortedMenus = $menus;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 29, 2025 at 09:56 AM
+-- Generation Time: Dec 29, 2025 at 11:32 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -659,6 +659,86 @@ INSERT INTO `interviews` (`id`, `candidate_id`, `interviewer_id`, `round`, `sche
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `inventory_categories`
+--
+
+CREATE TABLE `inventory_categories` (
+  `id` bigint UNSIGNED NOT NULL,
+  `workspace_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `color` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'primary',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inventory_categories`
+--
+
+INSERT INTO `inventory_categories` (`id`, `workspace_id`, `name`, `description`, `color`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Laptop', NULL, 'primary', '2025-12-29 03:23:24', '2025-12-29 03:23:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_items`
+--
+
+CREATE TABLE `inventory_items` (
+  `id` bigint UNSIGNED NOT NULL,
+  `workspace_id` bigint UNSIGNED NOT NULL,
+  `category_id` bigint UNSIGNED DEFAULT NULL,
+  `ownership_type` enum('office','user') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'office',
+  `owner_user_id` bigint UNSIGNED DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sku` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `quantity` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `condition` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'good',
+  `unit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pcs',
+  `price_purchase` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `price_sale` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inventory_items`
+--
+
+INSERT INTO `inventory_items` (`id`, `workspace_id`, `category_id`, `ownership_type`, `owner_user_id`, `name`, `sku`, `description`, `quantity`, `condition`, `unit`, `price_purchase`, `price_sale`, `image`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'user', 2, 'Laptop Asus ROG', NULL, NULL, 1.00, 'good', 'unit', 35000000.00, 0.00, NULL, '2025-12-29 04:23:49', '2025-12-29 04:25:09');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_transactions`
+--
+
+CREATE TABLE `inventory_transactions` (
+  `id` bigint UNSIGNED NOT NULL,
+  `workspace_id` bigint UNSIGNED NOT NULL,
+  `item_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `type` enum('IN','OUT','ADJUSTMENT') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'IN',
+  `quantity` decimal(10,2) NOT NULL,
+  `notes` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `inventory_transactions`
+--
+
+INSERT INTO `inventory_transactions` (`id`, `workspace_id`, `item_id`, `user_id`, `type`, `quantity`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, 'IN', 1.00, 'Initial stock on creation', '2025-12-29 04:23:49', '2025-12-29 04:23:49');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `items`
 --
 
@@ -1058,6 +1138,13 @@ CREATE TABLE `menu_orders` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ;
 
+--
+-- Dumping data for table `menu_orders`
+--
+
+INSERT INTO `menu_orders` (`id`, `user_id`, `client_id`, `menu_order`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, '[{\"category\":\"dashboard\",\"menus\":[{\"id\":\"dashboard\"}]},{\"category\":\"projects_and_task_management\",\"menus\":[{\"id\":\"projects\",\"submenus\":[{\"id\":\"manage_projects\"},{\"id\":\"favorite_projects\"},{\"id\":\"projects_bulk_upload\"},{\"id\":\"tags\"},{\"id\":\"task-lists\"}]},{\"id\":\"tasks\",\"submenus\":[{\"id\":\"manage_tasks\"},{\"id\":\"favorite_tasks\"},{\"id\":\"tasks_bulk_upload\"}]},{\"id\":\"statuses\"},{\"id\":\"priorities\"}]},{\"category\":\"team\",\"menus\":[{\"id\":\"workspaces\"},{\"id\":\"chat\"},{\"id\":\"users\"},{\"id\":\"clients\"}]},{\"category\":\"utilities\",\"menus\":[{\"id\":\"leads_management\",\"submenus\":[{\"id\":\"lead_sources\"},{\"id\":\"lead_stages\"},{\"id\":\"leads\"},{\"id\":\"lead_bulk_upload\"},{\"id\":\"lead_forms\"}]},{\"id\":\"email\",\"submenus\":[{\"id\":\"email_history\"},{\"id\":\"email_templates\"}]},{\"id\":\"todos\"},{\"id\":\"meetings\"},{\"id\":\"reports\",\"submenus\":[{\"id\":\"projects_report\"},{\"id\":\"tasks_report\"},{\"id\":\"estimates_invoices_report\"},{\"id\":\"income_vs_expense\"},{\"id\":\"leaves\"}]},{\"id\":\"hrms\",\"submenus\":[{\"id\":\"job_vacancies\"},{\"id\":\"candidates\"},{\"id\":\"candidates_status\"},{\"id\":\"interviews\"},{\"id\":\"divisions\"}]},{\"id\":\"notes\"},{\"id\":\"leave_requests\"},{\"id\":\"activity_log\"},{\"id\":\"calendars\",\"submenus\":[{\"id\":\"holiday_calendar\"}]},{\"id\":\"password_manager\"},{\"id\":\"general_file_manager\"}]},{\"category\":\"finance\",\"menus\":[{\"id\":\"contracts\",\"submenus\":[{\"id\":\"manage_contracts\"},{\"id\":\"contract_types\"}]},{\"id\":\"payslips\",\"submenus\":[{\"id\":\"manage_payslips\"},{\"id\":\"allowances\"},{\"id\":\"deductions\"}]},{\"id\":\"finance\",\"submenus\":[{\"id\":\"expenses\"},{\"id\":\"expense_types\"},{\"id\":\"estimates_invoices\"},{\"id\":\"payments\"},{\"id\":\"payment_methods\"},{\"id\":\"taxes\"},{\"id\":\"units\"},{\"id\":\"items\"}]}]},{\"category\":\"settings\",\"menus\":[{\"id\":\"settings\",\"submenus\":[{\"id\":\"general\"},{\"id\":\"company\"},{\"id\":\"custom_fields\"},{\"id\":\"security\"},{\"id\":\"permissions\"},{\"id\":\"languages\"},{\"id\":\"email\"},{\"id\":\"ai_model_settings\"},{\"id\":\"sms_gateway\"},{\"id\":\"google_calendar\"},{\"id\":\"pusher\"},{\"id\":\"media_storage\"},{\"id\":\"notification_templates\"},{\"id\":\"privacy_policy\"},{\"id\":\"plugins\"},{\"id\":\"system_updater\"},{\"id\":\"pwa\"}]}]}]', '2025-12-29 10:33:24', '2025-12-29 10:33:24');
+
 -- --------------------------------------------------------
 
 --
@@ -1194,7 +1281,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (206, '2025_12_24_103454_add_division_id_to_multiple_tables', 102),
 (207, '2025_12_24_185158_create_job_vacancies_table', 103),
 (208, '2025_12_24_185159_add_job_vacancy_id_to_candidates_table', 104),
-(209, '2025_01_01_000000_create_password_managers_table', 105);
+(209, '2025_01_01_000000_create_password_managers_table', 105),
+(210, '2025_01_02_000000_create_inventory_management_tables', 106),
+(211, '2025_12_29_105450_add_fields_to_inventory_items_table', 107);
 
 -- --------------------------------------------------------
 
@@ -1683,7 +1772,11 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (377, 'manage_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
 (378, 'create_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
 (379, 'edit_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
-(380, 'delete_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35');
+(380, 'delete_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
+(381, 'manage_inventory', 'web', '2025-12-29 03:02:57', '2025-12-29 03:02:57'),
+(382, 'create_inventory', 'web', '2025-12-29 03:02:57', '2025-12-29 03:02:57'),
+(383, 'edit_inventory', 'web', '2025-12-29 03:02:57', '2025-12-29 03:02:57'),
+(384, 'delete_inventory', 'web', '2025-12-29 03:02:57', '2025-12-29 03:02:57');
 
 -- --------------------------------------------------------
 
@@ -1904,6 +1997,10 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (378, 1),
 (379, 1),
 (380, 1),
+(381, 1),
+(382, 1),
+(383, 1),
+(384, 1),
 (14, 69),
 (15, 69),
 (27, 69),
@@ -1915,7 +2012,8 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (334, 69),
 (341, 69),
 (349, 69),
-(377, 69);
+(377, 69),
+(381, 69);
 
 -- --------------------------------------------------------
 
@@ -2744,6 +2842,27 @@ ALTER TABLE `interviews`
   ADD KEY `interviews_interviewer_id_foreign` (`interviewer_id`);
 
 --
+-- Indexes for table `inventory_categories`
+--
+ALTER TABLE `inventory_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inventory_items_category_id_foreign` (`category_id`),
+  ADD KEY `inventory_items_owner_user_id_foreign` (`owner_user_id`);
+
+--
+-- Indexes for table `inventory_transactions`
+--
+ALTER TABLE `inventory_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inventory_transactions_item_id_foreign` (`item_id`);
+
+--
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
@@ -3376,6 +3495,24 @@ ALTER TABLE `interviews`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `inventory_categories`
+--
+ALTER TABLE `inventory_categories`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `inventory_transactions`
+--
+ALTER TABLE `inventory_transactions`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
@@ -3493,7 +3630,7 @@ ALTER TABLE `menu_orders`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
 
 --
 -- AUTO_INCREMENT for table `milestones`
@@ -3541,7 +3678,7 @@ ALTER TABLE `payslips`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=381;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=385;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -3873,6 +4010,19 @@ ALTER TABLE `fcm_tokens`
 ALTER TABLE `interviews`
   ADD CONSTRAINT `interviews_candidate_id_foreign` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `interviews_interviewer_id_foreign` FOREIGN KEY (`interviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `inventory_items`
+--
+ALTER TABLE `inventory_items`
+  ADD CONSTRAINT `inventory_items_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `inventory_items_owner_user_id_foreign` FOREIGN KEY (`owner_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `inventory_transactions`
+--
+ALTER TABLE `inventory_transactions`
+  ADD CONSTRAINT `inventory_transactions_item_id_foreign` FOREIGN KEY (`item_id`) REFERENCES `inventory_items` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `job_vacancies`
