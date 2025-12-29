@@ -15,14 +15,14 @@ class PublicJobController extends Controller
     public function index()
     {
         $jobs = JobVacancy::where('status', 'active')
-            ->where(function($q) {
+            ->where(function ($q) {
                 $q->whereNull('end_date')
-                  ->orWhere('end_date', '>=', now());
+                    ->orWhere('end_date', '>=', now());
             })
             ->with(['division', 'workspace'])
             ->orderBy('created_at', 'desc')
             ->get();
-            
+
         return view('job_vacancies.public.index', compact('jobs'));
     }
 
@@ -31,7 +31,7 @@ class PublicJobController extends Controller
         $job = JobVacancy::where('slug', $slug)
             ->where('status', 'active')
             ->firstOrFail();
-            
+
         return view('job_vacancies.public.show', compact('job'));
     }
 
@@ -40,23 +40,23 @@ class PublicJobController extends Controller
         $job = JobVacancy::where('slug', $slug)
             ->where('status', 'active')
             ->firstOrFail();
-            
+
         $customFields = CustomField::where('module', 'candidate')->where('visibility', '1')->get();
-        
+
         return view('job_vacancies.public.apply', compact('job', 'customFields'));
     }
 
     public function storeApplication(Request $request, $slug)
     {
         $job = JobVacancy::where('slug', $slug)->firstOrFail();
-        
+
         // Basic Validation
         $rules = [
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'resume' => 'required|file|mimes:pdf,doc,docx|max:5120', // 5MB
+            'resume' => 'required|file|mimes:pdf,doc,docx|max:25120', // 25MB
         ];
 
         // Custom Fields Validation logic could be complex, skipping rigid validation for dynamic fields for now 
@@ -67,12 +67,12 @@ class PublicJobController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => true, 'message' => $validator->errors()->first(), 'errors' => $validator->errors()]);
         }
-        
+
         DB::beginTransaction();
         try {
             // Check if candidate exists? Maybe not, allow duplicates for different jobs?
             // "Taskify" usually implies internal workspace usage, but for public application, we create a candidate.
-            
+
             $candidate = new Candidate();
             $candidate->name = $request->first_name . ' ' . $request->last_name;
             $candidate->email = $request->email;
@@ -101,7 +101,7 @@ class PublicJobController extends Controller
                     if (is_array($val)) {
                         $val = json_encode($val);
                     }
-                    
+
                     CustomFieldable::create([
                         'custom_field_id' => $field->id,
                         'custom_fieldable_id' => $candidate->id,

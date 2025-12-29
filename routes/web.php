@@ -736,6 +736,7 @@ Route::middleware(['CheckInstallation'])->group(function () {
                     Route::post('/enable/{slug}', [PluginManagerController::class, 'enable'])->name('plugins.enable')->middleware('demo_restriction');
                     Route::post('/disable/{slug}', [PluginManagerController::class, 'disable'])->name('plugins.disable')->middleware('demo_restriction');
                     Route::post('/uninstall/{slug}', [PluginManagerController::class, 'uninstall'])->name('plugins.uninstall')->middleware('demo_restriction');
+                    Route::get('/download/{slug}', [PluginManagerController::class, 'download'])->name('plugins.download')->middleware('demo_restriction');
                 });
             });
         });

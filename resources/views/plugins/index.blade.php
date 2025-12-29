@@ -58,6 +58,11 @@
                                         {{ get_label('enable', 'Enable') }}
                                     </button>
                                 @endif
+                                <a href="{{ route('plugins.download', $plugin['slug']) }}">
+                                    <button class="btn btn-info btn-sm">
+                                        {{ get_label('download', 'Download') }}
+                                    </button>
+                                </a>
                                 <button class="btn btn-danger btn-sm uninstall-plugin" data-plugin="{{ $plugin['slug'] }}">
                                     {{ get_label('uninstall', 'Uninstall') }}
                                 </button>

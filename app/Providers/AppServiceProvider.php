@@ -393,12 +393,10 @@ class AppServiceProvider extends ServiceProvider
     private function configureFilesystem(array $mediaStorageSettings): void
     {
         config([
-            'filesystems.disks.s3' => [
-                'key' => $mediaStorageSettings['s3_key'],
-                'secret' => $mediaStorageSettings['s3_secret'],
-                'region' => $mediaStorageSettings['s3_region'],
-                'bucket' => $mediaStorageSettings['s3_bucket'],
-            ]
+            'filesystems.disks.s3.key' => $mediaStorageSettings['s3_key'],
+            'filesystems.disks.s3.secret' => $mediaStorageSettings['s3_secret'],
+            'filesystems.disks.s3.region' => $mediaStorageSettings['s3_region'],
+            'filesystems.disks.s3.bucket' => $mediaStorageSettings['s3_bucket'],
         ]);
     }
 

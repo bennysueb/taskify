@@ -73,7 +73,8 @@ return [
         'Candidate Statuses' => array('create_candidate_status',   'manage_candidate_status', 'edit_candidate_status', 'delete_candidate_status'),
         'Interviews' => array('create_interview',  'manage_interview', 'edit_interview', 'delete_interview'),
         'System Notifications' =>  array('manage_system_notifications', 'delete_system_notifications'),
-        'Divisions' =>  array('create_divisions', 'manage_divisions', 'edit_divisions', 'delete_divisions')
+        'Divisions' =>  array('create_divisions', 'manage_divisions', 'edit_divisions', 'delete_divisions'),
+        'Password Manager' => array('create_password_manager', 'manage_password_manager', 'edit_password_manager', 'delete_password_manager')
     ],
     'system_map' =>  [
         'a1b2c3d4' => 'doctor_brown',

@@ -56,7 +56,7 @@ class PluginHelper
             Log::error("❌ Invalid JSON in plugin.json: {$json}");
             return null;
         }
-        $data['slug'] = $slug;
+        $data['slug'] = $data['slug'] ?? $slug; // Use slug from json or fallback to requested slug
         $data['path'] = $path;
         return $data;
     }
@@ -76,7 +76,7 @@ class PluginHelper
 
         File::put($pluginJsonPath, json_encode($plugin, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
-        Log::info("🔄 Updated plugin status: {$slug} => " . ($enabled ? "enabled" : "disabled"));
+        // Log::info("🔄 Updated plugin status: {$slug} => " . ($enabled ? "enabled" : "disabled"));
     }
 
     /**

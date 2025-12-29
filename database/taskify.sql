@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 24, 2025 at 06:05 PM
+-- Generation Time: Dec 29, 2025 at 09:56 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -109,6 +109,7 @@ CREATE TABLE `allowance_payslip` (
 
 CREATE TABLE `candidates` (
   `id` bigint UNSIGNED NOT NULL,
+  `job_vacancy_id` bigint UNSIGNED DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -119,6 +120,13 @@ CREATE TABLE `candidates` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `division_id` bigint UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `candidates`
+--
+
+INSERT INTO `candidates` (`id`, `job_vacancy_id`, `name`, `email`, `phone`, `position`, `source`, `status_id`, `created_at`, `updated_at`, `division_id`) VALUES
+(2, 4, 'Febbiana Damiyah', 'febbiana80@gmail.com', '82120664105', 'Creative event concepts', 'Job Board', 3, '2025-12-28 08:50:12', '2025-12-28 08:52:19', 3);
 
 -- --------------------------------------------------------
 
@@ -136,6 +144,13 @@ CREATE TABLE `candidate_notification` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `candidate_notification`
+--
+
+INSERT INTO `candidate_notification` (`id`, `candidate_id`, `notification_id`, `is_system`, `is_push`, `created_at`, `updated_at`) VALUES
+(3, 2, 7, 1, 1, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -150,6 +165,15 @@ CREATE TABLE `candidate_statuses` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `candidate_statuses`
+--
+
+INSERT INTO `candidate_statuses` (`id`, `name`, `order`, `color`, `created_at`, `updated_at`) VALUES
+(1, 'Apply', 1, 'primary', '2025-12-24 12:44:56', '2025-12-24 12:59:38'),
+(2, 'Selection', 2, 'info', '2025-12-24 13:00:01', '2025-12-24 13:00:01'),
+(3, 'Interview', 3, 'warning', '2025-12-24 13:00:21', '2025-12-24 13:00:21');
 
 -- --------------------------------------------------------
 
@@ -367,6 +391,16 @@ CREATE TABLE `custom_fieldables` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `custom_fieldables`
+--
+
+INSERT INTO `custom_fieldables` (`id`, `custom_field_id`, `custom_fieldable_id`, `custom_fieldable_type`, `value`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'App\\Models\\Candidate', 'Field Label 1', '2025-12-24 12:38:15', '2025-12-24 12:38:15'),
+(2, 2, 1, 'App\\Models\\Candidate', '22', '2025-12-24 12:38:15', '2025-12-24 12:38:15'),
+(3, 1, 2, 'App\\Models\\Candidate', 'Field Label Additional Information', '2025-12-28 08:50:12', '2025-12-28 08:50:12'),
+(4, 2, 2, 'App\\Models\\Candidate', '10', '2025-12-28 08:50:12', '2025-12-28 08:50:12');
+
 -- --------------------------------------------------------
 
 --
@@ -386,6 +420,14 @@ CREATE TABLE `custom_fields` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `custom_fields`
+--
+
+INSERT INTO `custom_fields` (`id`, `module`, `field_label`, `name`, `field_type`, `guide_text`, `options`, `required`, `visibility`, `created_at`, `updated_at`) VALUES
+(1, 'candidate', 'Field Label', '', 'text', NULL, NULL, '1', '1', '2025-12-24 12:27:27', '2025-12-24 12:27:27'),
+(2, 'candidate', 'Field Label', '', 'number', NULL, NULL, '1', '1', '2025-12-24 12:28:31', '2025-12-24 12:29:04');
 
 -- --------------------------------------------------------
 
@@ -607,6 +649,13 @@ CREATE TABLE `interviews` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `interviews`
+--
+
+INSERT INTO `interviews` (`id`, `candidate_id`, `interviewer_id`, `round`, `scheduled_at`, `mode`, `location`, `status`, `created_at`, `updated_at`) VALUES
+(3, 2, 2, 'Technical', '2026-01-03 22:52:00', 'online', 'https://www.google.com/search?q=Event+Creative+Concept&oq=Event+Creative+Concept&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIHCAEQIRiPAtIBBzI2OWowajeoAgCwAgA&sourceid=chrome&ie=UTF-8', 'scheduled', '2025-12-28 08:52:56', '2025-12-28 08:52:56');
+
 -- --------------------------------------------------------
 
 --
@@ -623,6 +672,38 @@ CREATE TABLE `items` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_vacancies`
+--
+
+CREATE TABLE `job_vacancies` (
+  `id` bigint UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `workspace_id` bigint UNSIGNED NOT NULL,
+  `division_id` bigint UNSIGNED DEFAULT NULL,
+  `description` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `short_description` text COLLATE utf8mb4_unicode_ci,
+  `requirements` longtext COLLATE utf8mb4_unicode_ci,
+  `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Full Time',
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft',
+  `apply_link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `job_vacancies`
+--
+
+INSERT INTO `job_vacancies` (`id`, `title`, `slug`, `workspace_id`, `division_id`, `description`, `short_description`, `requirements`, `location`, `type`, `start_date`, `end_date`, `status`, `apply_link`, `created_at`, `updated_at`) VALUES
+(4, 'Creative event concepts', 'creative-event-concepts', 1, 3, '<p>Description&nbsp;<span class=\"text-danger\">*</span>Description&nbsp;<span class=\"text-danger\">*</span>Description&nbsp;<span class=\"text-danger\">*</span>Description&nbsp;<span class=\"text-danger\">*</span>Description&nbsp;<span class=\"text-danger\">*</span></p>', 'Short Description', '<p>RequirementsRequirementsRequirementsRequirementsRequirementsRequirements</p>', 'Depok Jawa Barat', 'Full Time', '2026-01-01', '2026-01-03', 'active', NULL, '2025-12-24 12:21:53', '2025-12-28 08:43:13');
 
 -- --------------------------------------------------------
 
@@ -926,6 +1007,13 @@ CREATE TABLE `media` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `media`
+--
+
+INSERT INTO `media` (`id`, `model_type`, `model_id`, `uuid`, `collection_name`, `name`, `file_name`, `mime_type`, `disk`, `conversions_disk`, `size`, `manipulations`, `custom_properties`, `generated_conversions`, `responsive_images`, `order_column`, `created_at`, `updated_at`) VALUES
+(2, 'App\\Models\\Candidate', 2, '54d9cf3d-8fcd-4284-b731-36b0d9bf4574', 'candidate-media', 'Permenperin No. 21 Tahun 2025', 'Permenperin-No.-21-Tahun-2025.pdf', 'application/pdf', 'public', 'public', 8403829, '[]', '[]', '[]', '[]', 1, '2025-12-28 08:50:12', '2025-12-28 08:50:12');
+
 -- --------------------------------------------------------
 
 --
@@ -1103,7 +1191,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (203, '2025_12_24_101022_add_user_id_to_contracts_table', 99),
 (204, '2025_12_24_101856_make_client_id_nullable_in_contracts_table', 100),
 (205, '2025_12_24_103436_create_divisions_table', 101),
-(206, '2025_12_24_103454_add_division_id_to_multiple_tables', 102);
+(206, '2025_12_24_103454_add_division_id_to_multiple_tables', 102),
+(207, '2025_12_24_185158_create_job_vacancies_table', 103),
+(208, '2025_12_24_185159_add_job_vacancy_id_to_candidates_table', 104),
+(209, '2025_01_01_000000_create_password_managers_table', 105);
 
 -- --------------------------------------------------------
 
@@ -1205,7 +1296,10 @@ INSERT INTO `notifications` (`id`, `workspace_id`, `from_id`, `type`, `type_id`,
 (1, 1, 'u_1', 'project', 1, 'assigned', 'Project Assignment', 'Admin GMS assigned you new project: Sampel Event Bimtek, ID:#1.', '2025-12-23 23:34:45', '2025-12-23 23:34:45'),
 (2, 1, 'u_1', 'task', 1, 'assigned', 'Task Assignment', 'Admin GMS assigned you new task: Task 1, ID:#1.', '2025-12-24 00:03:08', '2025-12-24 00:03:08'),
 (3, 1, 'u_1', 'task', 1, 'assigned', 'Task Assignment', 'Admin GMS assigned you new task: Task 1_a, ID:#1.', '2025-12-24 00:05:46', '2025-12-24 00:05:46'),
-(4, 1, 'u_1', 'task', 1, 'status_updated', 'Status Updation of a Task', 'Admin GMS has updated the status of task Task 1_a, ID:#1, from Not Started to In Progress.', '2025-12-24 00:42:54', '2025-12-24 00:42:54');
+(4, 1, 'u_1', 'task', 1, 'status_updated', 'Status Updation of a Task', 'Admin GMS has updated the status of task Task 1_a, ID:#1, from Not Started to In Progress.', '2025-12-24 00:42:54', '2025-12-24 00:42:54'),
+(5, 1, 'u_1', 'interview_assignment', 1, 'update', 'New Interview_assignment Assigned', 'Admin GMS from Taskify has scheduled a new interview for Febbiana Damiyah. Interview ID: #1, Round: Technical, Scheduled at: 2025-12-26T03:02, Interviewer: Benny Sueb.', '2025-12-24 13:04:08', '2025-12-24 13:04:08'),
+(6, 1, 'u_1', 'interview_assignment', 2, 'update', 'New Interview_assignment Assigned', 'Admin GMS from Taskify has scheduled a new interview for Febbiana Damiyah. Interview ID: #2, Round: Technicalsss, Scheduled at: 2025-12-27T04:34, Interviewer: Benny Sueb.', '2025-12-24 14:34:42', '2025-12-24 14:34:42'),
+(7, 1, 'u_1', 'interview_assignment', 3, 'update', 'New Interview_assignment Assigned', 'Admin GMS from Taskify has scheduled a new interview for Febbiana Damiyah. Interview ID: #3, Round: Technical, Scheduled at: 2026-01-03T22:52, Interviewer: Benny Sueb.', '2025-12-28 08:52:56', '2025-12-28 08:52:56');
 
 -- --------------------------------------------------------
 
@@ -1220,6 +1314,41 @@ CREATE TABLE `notification_user` (
   `is_push` tinyint(1) DEFAULT '0',
   `read_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notification_user`
+--
+
+INSERT INTO `notification_user` (`user_id`, `notification_id`, `is_system`, `is_push`, `read_at`) VALUES
+(2, 5, 1, 1, NULL),
+(2, 6, 1, 1, NULL),
+(2, 7, 1, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_managers`
+--
+
+CREATE TABLE `password_managers` (
+  `id` bigint UNSIGNED NOT NULL,
+  `workspace_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `password_managers`
+--
+
+INSERT INTO `password_managers` (`id`, `workspace_id`, `user_id`, `title`, `username`, `password`, `url`, `description`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'Gmail GMS', 'gmsconsolidate@gmail.com', 'eyJpdiI6Ik00YXBxajl5SmhFNGp6UXBmU3Zzb3c9PSIsInZhbHVlIjoiWFJBaUUxemtzeXlkbHplK1JsdWZkbWhmeWowaFV3SkZnS0FITTNwZElWMD0iLCJtYWMiOiIyNzkzODI4Njg0MTMxYzQ3YmVkOGFmMGU5ZTU0MTM4NmQxMzNmOWY3ZThmNGVhZDk3NWYxM2Q2OTA0ZDhhYTU0IiwidGFnIjoiIn0=', 'https://mail.google.com/', 'Akun Gmail GMS', '2025-12-29 01:53:29', '2025-12-29 01:53:29');
 
 -- --------------------------------------------------------
 
@@ -1550,7 +1679,11 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (373, 'create_divisions', 'web', '2025-12-24 04:41:54', '2025-12-24 04:41:54'),
 (374, 'manage_divisions', 'web', '2025-12-24 04:41:54', '2025-12-24 04:41:54'),
 (375, 'edit_divisions', 'web', '2025-12-24 04:41:54', '2025-12-24 04:41:54'),
-(376, 'delete_divisions', 'web', '2025-12-24 04:41:54', '2025-12-24 04:41:54');
+(376, 'delete_divisions', 'web', '2025-12-24 04:41:54', '2025-12-24 04:41:54'),
+(377, 'manage_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
+(378, 'create_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
+(379, 'edit_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35'),
+(380, 'delete_password_manager', 'web', '2025-12-28 23:11:35', '2025-12-28 23:11:35');
 
 -- --------------------------------------------------------
 
@@ -1767,18 +1900,22 @@ CREATE TABLE `role_has_permissions` (
 --
 
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
+(377, 1),
+(378, 1),
+(379, 1),
+(380, 1),
 (14, 69),
 (15, 69),
 (27, 69),
 (67, 69),
 (71, 69),
 (82, 69),
-(83, 69),
 (86, 69),
 (151, 69),
 (334, 69),
 (341, 69),
-(349, 69);
+(349, 69),
+(377, 69);
 
 -- --------------------------------------------------------
 
@@ -2076,7 +2213,7 @@ CREATE TABLE `templates` (
 
 INSERT INTO `templates` (`id`, `type`, `name`, `subject`, `content`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'email', 'account_creation', 'Account Creation', '<div style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; color: #718096; height: 100%; line-height: 1.4; margin: 0; padding: 0; width: 100%!important;\">\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #edf2f7; margin: 0; padding: 0; width: 100%;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" align=\"center\">\n<table style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; margin: 0px; padding: 0px; width: 100%; height: 659.844px;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr style=\"height: 77.0938px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; padding: 25px 0px; height: 77.0938px; text-align: center;\"><span style=\"font-size: 18px;\">{COMPANY_LOGO}</span></td>\n</tr>\n<tr style=\"height: 486.25px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; background-color: rgb(237, 242, 247); margin: 0px; padding: 0px; width: 100%; border: hidden !important; height: 486.25px;\" width=\"100%\">\n<table class=\"m_2051327272198114809inner-body\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; margin: 0 auto; padding: 0; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; color: rgb(61, 72, 82); font-size: 18px; font-weight: bold; margin-top: 0px; text-align: left;\">Hello, {FIRST_NAME} {LAST_NAME}</h1>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">Your account has been successfully created.</p>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\"><strong>Username:</strong> {USER_NAME}<br><strong>Password:</strong> {PASSWORD}</p>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">If you did not create an account, no further action is required.</p>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">To access your account, simply click on the link below or copy and paste it into your browser:</p>\n{SITE_URL}<br><br>Regards,</td>\n</tr>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;\">&nbsp;</h1>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height: 96.5px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; height: 96.5px;\">\n<table class=\"m_2051327272198114809footer\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; margin: 0 auto; padding: 0; text-align: center; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\" align=\"center\">\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;\">&copy; {CURRENT_YEAR} {COMPANY_TITLE}. All rights reserved.</p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<div class=\"yj6qo\">&nbsp;</div>\n<div class=\"adL\">&nbsp;</div>\n</div>', 0, '2025-04-08 12:13:13', '2025-12-23 04:16:38'),
-(17, 'email', 'interview_assignment', 'test email', 'testttttttttt', 1, '2025-05-20 05:36:58', '2025-05-20 05:36:58'),
+(17, 'email', 'interview_assignment', 'Interview', '<p>{INTERVIEW_ID}{INTERVIEW_URL}</p>', 1, '2025-05-20 05:36:58', '2025-12-24 14:29:24'),
 (18, 'sms', 'interview_assignment', NULL, 'TEST', 1, '2025-05-21 09:24:06', '2025-05-21 09:24:06'),
 (19, 'sms', 'interview_status_update', NULL, 'Deep SEARCH TEST UPDATE STATUS.', 1, '2025-05-21 09:24:53', '2025-05-21 09:24:53'),
 (20, 'push', 'project_assignment', 'Project Assignment', '{ASSIGNEE_FIRST_NAME} {ASSIGNEE_LAST_NAME} assigned you new project: {PROJECT_TITLE}, ID:#{PROJECT_ID}.', 1, '2025-06-05 05:33:46', '2025-12-23 04:29:29'),
@@ -2160,6 +2297,12 @@ INSERT INTO `templates` (`id`, `type`, `name`, `subject`, `content`, `status`, `
 (96, 'slack', 'birthday_wish', NULL, 'Hello *{FIRST_NAME} {LAST_NAME}*, {COMPANY_TITLE} wishes you a very Happy Birthday!', 1, '2025-12-23 04:34:56', '2025-12-23 04:34:56'),
 (97, 'slack', 'work_anniversary_wish', NULL, 'Hello *{FIRST_NAME} {LAST_NAME}*, {COMPANY_TITLE} wishes you a very happy work anniversary!', 1, '2025-12-23 04:35:05', '2025-12-23 04:35:05'),
 (98, 'sms', 'project_assignment', NULL, '', 0, '2025-12-24 07:40:04', '2025-12-24 07:40:04');
+INSERT INTO `templates` (`id`, `type`, `name`, `subject`, `content`, `status`, `created_at`, `updated_at`) VALUES
+(99, 'email', 'job_application_received', 'Application Received: {JOB_TITLE} - {CANDIDATE_NAME}', '<div style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; color: #718096; height: 100%; line-height: 1.4; margin: 0; padding: 0; width: 100%!important;\">\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #edf2f7; margin: 0; padding: 0; width: 100%;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" align=\"center\">\n<table style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; margin: 0px; padding: 0px; width: 100%; height: 659.844px;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr style=\"height: 77.0938px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; padding: 25px 0px; height: 77.0938px; text-align: center;\"><span style=\"font-size: 18px;\">{COMPANY_LOGO}</span></td>\n</tr>\n<tr style=\"height: 486.25px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; background-color: rgb(237, 242, 247); margin: 0px; padding: 0px; width: 100%; border: hidden !important; height: 486.25px;\" width=\"100%\">\n<table class=\"m_2051327272198114809inner-body\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; margin: 0 auto; padding: 0; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; color: rgb(61, 72, 82); font-size: 18px; font-weight: bold; margin-top: 0px; text-align: left;\">Hello, {CANDIDATE_NAME}</h1>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">Thank you for applying for the position of <strong>{JOB_TITLE}, </strong>at <strong>{COMPANY_TITLE}.</strong><br><br>We have received your application and will review it shortly. If your qualifications match our requirements, we will contact you to discuss the next steps.</p>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">Regards,</p>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\"><strong>{COMPANY_TITLE} Team</strong></p>\n<table style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; border-top: 1px solid rgb(232, 229, 239); margin-top: 25px; padding-top: 25px; height: 57px;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr style=\"height: 57px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; height: 57px;\">\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;\">Visit us at: {SITE_URL}</p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;\">&nbsp;</h1>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height: 96.5px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; height: 96.5px;\">\n<table class=\"m_2051327272198114809footer\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; margin: 0 auto; padding: 0; text-align: center; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\" align=\"center\">\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;\">&copy; {CURRENT_YEAR} {COMPANY_TITLE}. All rights reserved.</p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<div class=\"yj6qo\">&nbsp;</div>\n<div class=\"adL\">&nbsp;</div>\n</div>', 1, '2025-12-24 13:40:34', '2025-12-28 08:29:54'),
+(100, 'email', 'project_status_updation', 'Project Status Updation', '<div style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; color: #718096; height: 100%; line-height: 1.4; margin: 0; padding: 0; width: 100%!important;\">\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #edf2f7; margin: 0; padding: 0; width: 100%;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" align=\"center\">\n<table style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; margin: 0px; padding: 0px; width: 100%; height: 659.844px;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr style=\"height: 77.0938px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; padding: 25px 0px; height: 77.0938px; text-align: center;\"><span style=\"font-size: 18px;\">{COMPANY_LOGO}</span></td>\n</tr>\n<tr style=\"height: 486.25px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; background-color: rgb(237, 242, 247); margin: 0px; padding: 0px; width: 100%; border: hidden !important; height: 486.25px;\" width=\"100%\">\n<table class=\"m_2051327272198114809inner-body\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; margin: 0 auto; padding: 0; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; color: rgb(61, 72, 82); font-size: 18px; font-weight: bold; margin-top: 0px; text-align: left;\">Hello, {FIRST_NAME} {LAST_NAME}</h1>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">This is to inform you that {UPDATER_FIRST_NAME} {UPDATER_LAST_NAME} has updated the status of project <strong>{PROJECT_TITLE}</strong>, ID: <strong>#{PROJECT_ID}</strong>, from <strong>{OLD_STATUS}</strong> to <strong>{NEW_STATUS}</strong>.<br><br>Please click the button below to access detailed project information.</p>\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; margin: 30px auto; padding: 0; text-align: center; width: 100%;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" align=\"center\">\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" role=\"presentation\" border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" align=\"center\">\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\" role=\"presentation\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\"><a class=\"m_2051327272198114809button\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; border-radius: 4px; color: #fff; display: inline-block; overflow: hidden; text-decoration: none; background-color: #2d3748; border-bottom: 8px solid #2d3748; border-left: 18px solid #2d3748; border-right: 18px solid #2d3748; border-top: 8px solid #2d3748;\" href=\"{PROJECT_URL}\" target=\"_blank\" rel=\"noopener\" data-saferedirecturl=\"https://www.google.com/url?q=http://127.0.0.1:8000/email/verify/129/9e323bcc5df5fdff3fe6ff960fd6576204a510ca?expires%3D1710157052%26signature%3D2df5df03c59d0dcd960500989168d0bb4b064035d572bc4195ca5a912b0302e8&amp;source=gmail&amp;ust=1710333202290000&amp;usg=AOvVaw2RJnO33Iiu4v5j5tJBiQWH\">View Project Details</a></td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;\">Regards,</p>\n<table style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; border-top: 1px solid #e8e5ef; margin-top: 25px; padding-top: 25px;\" role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\';\">\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;\">If you\'re having trouble clicking the \"View Project Details\" button, copy and paste the URL below into your web browser: {PROJECT_URL}</p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\">\n<h1 style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;\">&nbsp;</h1>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n<tr style=\"height: 96.5px;\">\n<td style=\"box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Helvetica, Arial, sans-serif, \'Apple Color Emoji\', \'Segoe UI Emoji\', \'Segoe UI Symbol\'; height: 96.5px;\">\n<table class=\"m_2051327272198114809footer\" style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; margin: 0 auto; padding: 0; text-align: center; width: 570px;\" role=\"presentation\" width=\"570\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\">\n<tbody>\n<tr>\n<td style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; max-width: 100vw; padding: 32px;\" align=\"center\">\n<p style=\"box-sizing: border-box; font-family: -apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif,\'Apple Color Emoji\',\'Segoe UI Emoji\',\'Segoe UI Symbol\'; line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;\">&copy; {CURRENT_YEAR} {COMPANY_TITLE}. All rights reserved.</p>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<div class=\"yj6qo\">&nbsp;</div>\n<div class=\"adL\">&nbsp;</div>\n</div>', 1, '2025-12-24 14:08:51', '2025-12-24 14:08:51'),
+(101, 'telegram', 'interview_assignment', NULL, '{INTERVIEW_ID}{INTERVIEW_URL}', 1, '2025-12-24 14:28:23', '2025-12-24 14:29:32'),
+(102, 'email', 'interview_status_update', 'Status Updation a Interview', '<p>Status Updation a Interview</p>', 1, '2025-12-24 14:33:04', '2025-12-24 14:33:04'),
+(103, 'telegram', 'interview_status_update', NULL, 'Status Updation a Interview', 1, '2025-12-24 14:33:15', '2025-12-24 14:33:15');
 
 -- --------------------------------------------------------
 
@@ -2393,7 +2536,8 @@ ALTER TABLE `allowance_payslip`
 ALTER TABLE `candidates`
   ADD PRIMARY KEY (`id`),
   ADD KEY `candidates_status_id_foreign` (`status_id`),
-  ADD KEY `candidates_division_id_foreign` (`division_id`);
+  ADD KEY `candidates_division_id_foreign` (`division_id`),
+  ADD KEY `candidates_job_vacancy_id_foreign` (`job_vacancy_id`);
 
 --
 -- Indexes for table `candidate_notification`
@@ -2606,6 +2750,15 @@ ALTER TABLE `items`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `job_vacancies`
+--
+ALTER TABLE `job_vacancies`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `job_vacancies_slug_unique` (`slug`),
+  ADD KEY `job_vacancies_division_id_foreign` (`division_id`),
+  ADD KEY `job_vacancies_workspace_id_foreign` (`workspace_id`);
+
+--
 -- Indexes for table `languages`
 --
 ALTER TABLE `languages`
@@ -2794,6 +2947,12 @@ ALTER TABLE `notifications`
 ALTER TABLE `notification_user`
   ADD PRIMARY KEY (`user_id`,`notification_id`),
   ADD KEY `notification_user_notification_id_foreign` (`notification_id`);
+
+--
+-- Indexes for table `password_managers`
+--
+ALTER TABLE `password_managers`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `password_resets`
@@ -3070,19 +3229,19 @@ ALTER TABLE `allowance_payslip`
 -- AUTO_INCREMENT for table `candidates`
 --
 ALTER TABLE `candidates`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `candidate_notification`
 --
 ALTER TABLE `candidate_notification`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `candidate_statuses`
 --
 ALTER TABLE `candidate_statuses`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `clients`
@@ -3136,13 +3295,13 @@ ALTER TABLE `contract_types`
 -- AUTO_INCREMENT for table `custom_fieldables`
 --
 ALTER TABLE `custom_fieldables`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `custom_fields`
 --
 ALTER TABLE `custom_fields`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `deductions`
@@ -3214,13 +3373,19 @@ ALTER TABLE `fcm_tokens`
 -- AUTO_INCREMENT for table `interviews`
 --
 ALTER TABLE `interviews`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_vacancies`
+--
+ALTER TABLE `job_vacancies`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `languages`
@@ -3304,7 +3469,7 @@ ALTER TABLE `letter_variables`
 -- AUTO_INCREMENT for table `media`
 --
 ALTER TABLE `media`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `meetings`
@@ -3328,7 +3493,7 @@ ALTER TABLE `menu_orders`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=207;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=210;
 
 --
 -- AUTO_INCREMENT for table `milestones`
@@ -3346,7 +3511,13 @@ ALTER TABLE `notes`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `password_managers`
+--
+ALTER TABLE `password_managers`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -3370,7 +3541,7 @@ ALTER TABLE `payslips`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=377;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=381;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -3490,7 +3661,7 @@ ALTER TABLE `taxes`
 -- AUTO_INCREMENT for table `templates`
 --
 ALTER TABLE `templates`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `time_trackers`
@@ -3568,6 +3739,7 @@ ALTER TABLE `allowance_payslip`
 --
 ALTER TABLE `candidates`
   ADD CONSTRAINT `candidates_division_id_foreign` FOREIGN KEY (`division_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `candidates_job_vacancy_id_foreign` FOREIGN KEY (`job_vacancy_id`) REFERENCES `job_vacancies` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `candidates_status_id_foreign` FOREIGN KEY (`status_id`) REFERENCES `candidate_statuses` (`id`) ON DELETE SET NULL;
 
 --
@@ -3701,6 +3873,13 @@ ALTER TABLE `fcm_tokens`
 ALTER TABLE `interviews`
   ADD CONSTRAINT `interviews_candidate_id_foreign` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `interviews_interviewer_id_foreign` FOREIGN KEY (`interviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_vacancies`
+--
+ALTER TABLE `job_vacancies`
+  ADD CONSTRAINT `job_vacancies_division_id_foreign` FOREIGN KEY (`division_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `job_vacancies_workspace_id_foreign` FOREIGN KEY (`workspace_id`) REFERENCES `workspaces` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `leads`
