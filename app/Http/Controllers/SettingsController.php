@@ -300,6 +300,15 @@ class SettingsController extends Controller
                 return response()->json(['error' => true, 'message' => 'SMTP settings are not configured.']);
             }
 
+            // Auto-correct encryption for Gmail if mismatch is detected
+            if (str_contains($emailSettings['smtp_host'], 'gmail.com')) {
+                if ($emailSettings['smtp_port'] == 465 && $emailSettings['smtp_encryption'] != 'ssl') {
+                    $emailSettings['smtp_encryption'] = 'ssl';
+                } elseif ($emailSettings['smtp_port'] == 587 && $emailSettings['smtp_encryption'] != 'tls') {
+                    $emailSettings['smtp_encryption'] = 'tls';
+                }
+            }
+
             // Dynamically set config for this request
             config([
                 'mail.default' => 'smtp',
@@ -310,6 +319,13 @@ class SettingsController extends Controller
                 'mail.mailers.smtp.password' => $emailSettings['password'],
                 'mail.from.address' => $emailSettings['email'],
                 'mail.from.name' => $generalSettings['company_title'] ?? 'Taskify',
+                'mail.mailers.smtp.stream' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ],
             ]);
 
             // Clear resolved mailer instance to force reconstruction with new config

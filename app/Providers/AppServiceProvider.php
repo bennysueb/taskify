@@ -370,19 +370,36 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureMail(array $emailSettings, string $companyTitle): void
     {
+        // Auto-correct encryption for Gmail if mismatch is detected
+        if (isset($emailSettings['smtp_host']) && str_contains($emailSettings['smtp_host'], 'gmail.com')) {
+            if ($emailSettings['smtp_port'] == 465 && $emailSettings['smtp_encryption'] != 'ssl') {
+                $emailSettings['smtp_encryption'] = 'ssl';
+            } elseif ($emailSettings['smtp_port'] == 587 && $emailSettings['smtp_encryption'] != 'tls') {
+                $emailSettings['smtp_encryption'] = 'tls';
+            }
+        }
+
         config([
             'mail.default' => 'smtp',
             'mail.mailers.smtp' => [
-                'host' => $emailSettings['smtp_host'],
-                'port' => $emailSettings['smtp_port'],
+                'host' => $emailSettings['smtp_host'] ?? '',
+                'port' => $emailSettings['smtp_port'] ?? '',
                 'transport' => 'smtp',
-                'encryption' => $emailSettings['smtp_encryption'],
-                'username' => $emailSettings['email'],
-                'password' => $emailSettings['password'],
+                'encryption' => $emailSettings['smtp_encryption'] ?? '',
+                'username' => $emailSettings['email'] ?? '',
+                'password' => $emailSettings['password'] ?? '',
+                // Add stream context for local development (Laragon/XAMPP)
+                'stream' => [
+                    'ssl' => [
+                        'allow_self_signed' => true,
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ],
+                ],
             ],
             'mail.from' => [
                 'name' => $companyTitle,
-                'address' => $emailSettings['email'],
+                'address' => $emailSettings['email'] ?? '',
             ]
         ]);
     }

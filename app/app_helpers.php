@@ -550,16 +550,38 @@ if (!function_exists('isEmailConfigured')) {
             return false;
         }
 
+        // Auto-correct encryption for Gmail if mismatch is detected
+        if (str_contains($email_settings['smtp_host'], 'gmail.com')) {
+            if ($email_settings['smtp_port'] == 465 && ($email_settings['smtp_encryption'] ?? '') != 'ssl') {
+                $email_settings['smtp_encryption'] = 'ssl';
+            } elseif ($email_settings['smtp_port'] == 587 && ($email_settings['smtp_encryption'] ?? '') != 'tls') {
+                $email_settings['smtp_encryption'] = 'tls';
+            }
+        }
+
         // Step 2: Try SMTP connection
         try {
             $transport = new EsmtpTransport(
                 $email_settings['smtp_host'],
                 (int) $email_settings['smtp_port'],
-                ($email_settings['encryption'] ?? null) === 'ssl'
+                ($email_settings['smtp_encryption'] ?? null) === 'ssl'
             );
 
             $transport->setUsername($email_settings['email']);
             $transport->setPassword($email_settings['password']);
+
+            // Set stream options for local development compatibility (Laragon/XAMPP)
+            $streamOptions = [
+                'ssl' => [
+                    'allow_self_signed' => true,
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                ],
+            ];
+
+            if (method_exists($transport, 'setStreamOptions')) {
+                $transport->setStreamOptions($streamOptions);
+            }
 
             // This actually opens the connection to verify SMTP
             $transport->start();
